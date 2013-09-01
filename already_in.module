@@ -69,12 +69,18 @@ function already_in_menu_alter(&$callbacks) {
     $callbacks['user/register']['access callback'] = 'already_in_access';
     $callbacks['user/register']['access arguments'] = array('register');
     $callbacks['user/password']['access callback'] = 'already_in_access';
+    $callbacks['user/password']['access arguments'] = array('password');
     $callbacks['user/login']['access callback'] = 'already_in_access';
+    $callbacks['user/login']['access arguments'] = array('login');    
 }
 
 function already_in_access($op = "") {
   // access callback gets called when displaying menus, so needs to check which page is actually getting called
-  if (arg(0) == 'user' && (arg(1) == 'register' || arg(1) == 'password' || arg(1) == 'login')) {
+  // this will fail if menu check is for page we are on because redirect stops flow
+  if (arg(0) == 'user' 
+          && ((arg(1) == 'register' && $op == 'register') 
+            || (arg(1) == 'password' && $op == 'password') 
+            || (arg(1) == 'login' && $op == 'login'))) {
     // in the original user module this function is 'user_register_access'
     // return user_is_anonymous() && variable_get('user_register', 1);
     // this removes the 'user_is_anonymous' call in the access check
