@@ -77,10 +77,11 @@ function already_in_menu_alter(&$callbacks) {
 function already_in_access($op = "") {
   // access callback gets called when displaying menus, so needs to check which page is actually getting called
   // this will fail if menu check is for page we are on because redirect stops flow
-  if (arg(0) == 'user' 
-          && ((arg(1) == 'register' && $op == 'register') 
-            || (arg(1) == 'password' && $op == 'password') 
-            || (arg(1) == 'login' && $op == 'login'))) {
+  $args = arg();
+  if ( empty($_POST) 
+       && (($args[0] == 'user' && $args[1] == 'register' && $op == 'register')
+        || ($args[0] == 'user' && $args[1] == 'password' && $op == 'password') 
+        || ($args[0] == 'user' && $args[1] == 'login' && $op == 'login'))) {
     // in the original user module this function is 'user_register_access'
     // return user_is_anonymous() && variable_get('user_register', 1);
     // this removes the 'user_is_anonymous' call in the access check
@@ -89,12 +90,6 @@ function already_in_access($op = "") {
         drupal_set_message(t('You are already logged in.'), 'status', FALSE);
       }
       drupal_goto(filter_xss(variable_get('already_in_destination', 'user')));  
-    }
-    else if ($op == 'register') {
-      return variable_get('user_register', 1);
-    }
-    else {
-      return user_is_anonymous();
     }
   }
   return user_register_access();
